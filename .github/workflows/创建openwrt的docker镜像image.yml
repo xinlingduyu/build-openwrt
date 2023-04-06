@@ -5,7 +5,7 @@
 # Build and Push to: https://hub.docker.com/
 #=====================================================================================
 
-name: Build the Docker image of OpenWrt
+name: 创建openwrt的docker镜像image
 
 on:
   repository_dispatch:
