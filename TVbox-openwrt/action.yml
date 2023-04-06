@@ -1,0 +1,94 @@
+name: "Make OpenWrt"
+author: "https://github.com/ophub/amlogic-s9xxx-openwrt"
+description: "Support Amlogic, Rockchip and Allwinner boxes."
+inputs:
+  mode:
+    description: "Select script."
+    required: false
+    default: "ophub"
+  openwrt_path:
+    description: "Select armvirt64 file path."
+    required: false
+    default: "openwrt/bin/targets/*/*/*rootfs.tar.gz"
+  openwrt_board:
+    description: "Select device board."
+    required: false
+    default: "all"
+  openwrt_kernel:
+    description: "Select kernel version."
+    required: false
+    default: "6.1.1_5.15.1"
+  auto_kernel:
+    description: "Auto use the latest kernel."
+    required: false
+    default: "true"
+  kernel_repo:
+    description: "Select kernel repository."
+    required: false
+    default: "https://github.com/ophub/kernel/tree/main/pub"
+  openwrt_size:
+    description: "Set the rootfs size(Unit: MiB)."
+    required: false
+    default: "1024"
+  gh_token:
+    description: "Set the token."
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      run: |
+        cd ${GITHUB_ACTION_PATH}
+        echo -e "ophub package actions path: ${PWD}"
+
+        openwrt_filename="${{ inputs.openwrt_path }}"
+        openwrt_savepath="openwrt-armvirt"
+        openwrt_outpath="out"
+        echo -e "Get openwrt file input parameters: [ ${openwrt_filename} ]"
+        [[ -z "${openwrt_filename}" ]] && echo -e "The [ openwrt_path ] variable must be specified." && exit 1
+        [[ -d "${openwrt_savepath}" ]] || mkdir -p ${openwrt_savepath}
+        [[ -d "${openwrt_outpath}" ]] || mkdir -p ${openwrt_outpath}
+
+        if [[ "${openwrt_filename}" == http* ]]; then
+            echo -e "Use wget to download file: [ ${openwrt_filename} ]"
+            wget ${openwrt_filename} -q -P ${openwrt_savepath} 2>/dev/null
+        else
+            echo -e "Copy OpenWrt rootfs file: [ ${openwrt_filename} ]"
+            cp -vf ${GITHUB_WORKSPACE}/${openwrt_filename} ${openwrt_savepath} 2>/dev/null
+
+            # If the .config file exists, save it to the out directory
+            config_file="${GITHUB_WORKSPACE}/${openwrt_filename%%/*}/.config"
+            [[ -s "${config_file}" ]] && {
+                echo -e "Copy OpenWrt .config file: [ ${config_file} ]"
+                cp -vf ${config_file} ${openwrt_outpath}/config 2>/dev/null
+            }
+        fi
+        sync
+        echo -e "About the ${openwrt_savepath} directory: \n$(ls -l ${openwrt_savepath} 2>/dev/null)"
+
+        cd ${GITHUB_ACTION_PATH}
+        echo -e "Start to make openwrt..."
+        make_command=""
+        [[ -n "${{ inputs.openwrt_board }}" ]] && make_command="${make_command} -b ${{ inputs.openwrt_board }}"
+        [[ -n "${{ inputs.openwrt_kernel }}" ]] && make_command="${make_command} -k ${{ inputs.openwrt_kernel }}"
+        [[ -n "${{ inputs.auto_kernel }}" ]] && make_command="${make_command} -a ${{ inputs.auto_kernel }}"
+        [[ -n "${{ inputs.kernel_repo }}" ]] && make_command="${make_command} -r ${{ inputs.kernel_repo }}"
+        [[ -n "${{ inputs.openwrt_size }}" ]] && make_command="${make_command} -s ${{ inputs.openwrt_size }}"
+        [[ -n "${{ inputs.gh_token }}" ]] && make_command="${make_command} -g ${{ inputs.gh_token }}"
+        sudo ./make ${make_command}
+
+        cd ${GITHUB_ACTION_PATH}
+        echo -e "Output environment variables."
+        echo "PACKAGED_OUTPUTPATH=${PWD}/${openwrt_outpath}" >> ${GITHUB_ENV}
+        echo "PACKAGED_OUTPUTDATE=$(date +"%m.%d.%H%M")" >> ${GITHUB_ENV}
+        echo "PACKAGED_STATUS=success" >> ${GITHUB_ENV}
+        echo -e "PACKAGED_OUTPUTPATH: ${PWD}/${openwrt_outpath}"
+        echo -e "PACKAGED_OUTPUTDATE: $(date +"%m.%d.%H%M")"
+        echo -e "PACKAGED_STATUS: success"
+        echo -e "PACKAGED_OUTPUTPATH files list: \n$(ls -l ${PWD}/${openwrt_outpath} 2>/dev/null)"
+
+branding:
+  icon: "terminal"
+  color: "gray-dark"
