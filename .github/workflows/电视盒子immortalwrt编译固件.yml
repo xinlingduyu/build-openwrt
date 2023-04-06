@@ -4,7 +4,7 @@
 # Source code repository: https://github.com/immortalwrt/immortalwrt / Branch: openwrt-21.02
 #============================================================================================
 
-name: Build OpenWrt with immortalwrt
+name: 电视盒子immortalwrt编译固件
 
 on:
   repository_dispatch:

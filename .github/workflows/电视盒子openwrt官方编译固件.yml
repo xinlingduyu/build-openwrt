@@ -1,10 +1,10 @@
 #=====================================================================================
 # https://github.com/ophub/amlogic-s9xxx-openwrt
-# Description: Build OpenWrt with lede
-# Source code repository: https://github.com/coolsnowwolf/lede / Branch: master
+# Description: Build OpenWrt with official
+# Source code repository: https://github.com/openwrt/openwrt / Branch: master
 #=====================================================================================
 
-name: Build OpenWrt with lede
+name: 电视盒子openwrt官方编译固件
 
 on:
   repository_dispatch:
@@ -86,12 +86,12 @@ on:
           - breakings/OpenWrt
 
 env:
-  REPO_URL: https://github.com/coolsnowwolf/lede
+  REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: master
-  FEEDS_CONF: config-openwrt/lede-master/feeds.conf.default
-  CONFIG_FILE: config-openwrt/lede-master/config
-  DIY_P1_SH: config-openwrt/lede-master/diy-part1.sh
-  DIY_P2_SH: config-openwrt/lede-master/diy-part2.sh
+  FEEDS_CONF: config-openwrt/openwrt-master/feeds.conf.default
+  CONFIG_FILE: config-openwrt/openwrt-master/config
+  DIY_P1_SH: config-openwrt/openwrt-master/diy-part1.sh
+  DIY_P2_SH: config-openwrt/openwrt-master/diy-part2.sh
   TZ: America/New_York
 
 jobs:
@@ -147,7 +147,7 @@ jobs:
       - name: Load custom configuration
         run: |
           [[ -d "files" ]] && mv -f files openwrt/files
-          [[ -e "${CONFIG_FILE}" ]] && cp -f ${CONFIG_FILE} openwrt/.config
+          [[ -e ${CONFIG_FILE} ]] && cp -f ${CONFIG_FILE} openwrt/.config
           chmod +x ${DIY_P2_SH}
           cd openwrt/
           ${GITHUB_WORKSPACE}/${DIY_P2_SH}
@@ -167,7 +167,7 @@ jobs:
           cd openwrt/
           echo -e "$(nproc) thread compile"
           make -j$(($(nproc) + 1)) V=s || make -j1 || make -j1 V=s
-          echo "build_tag=OpenWrt_lede_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
+          echo "build_tag=OpenWrt_official_$(date +"%m.%d.%H%M")" >> ${GITHUB_OUTPUT}
           echo "status=success" >> ${GITHUB_OUTPUT}
 
       - name: Upload OpenWrt Firmware to Release
