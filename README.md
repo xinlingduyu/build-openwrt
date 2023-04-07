@@ -43,6 +43,7 @@
 - 打开diy-part1.sh文件，电视盒子必须安装amlogic插件，格式如下：
 
     #####Add a feed source
+    
     echo 'src-git amlogic https://github.com/ophub/luci-app-amlogic' >>feeds.conf.default
     
     
