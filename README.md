@@ -15,8 +15,8 @@ lienol版本：  https://github.com/Lienol/openwrt
 
 2，打开diy-part1.sh文件，添加插件或主题，电视盒子必须安装amlogic插件，格式如下：
 
-# Add a feed source
-echo 'src-git amlogic https://github.com/ophub/luci-app-amlogic' >>feeds.conf.default
+    #####Add a feed source
+    echo 'src-git amlogic https://github.com/ophub/luci-app-amlogic' >>feeds.conf.default
 
 3，进入.github/workflows文件夹，打开【通用编译openwrt.yml】或者【电视盒子编译+打包IMG镜像】，找到下面代码：
 
