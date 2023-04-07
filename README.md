@@ -5,11 +5,13 @@
 
 说明：源码来自各位大佬分享，为了方便编译，做了一些修改，可以支持不同分支的opewrt源码，同时集成了打包img镜像的功能。
 
-- 官方版本：    https://github.com/openwrt/openwrt      
+- 官方源码：    https://github.com/openwrt/openwrt      
 
-- lede版本：    https://github.com/coolsnowwolf/lede  
+- lede源码：    https://github.com/coolsnowwolf/lede  
 
-- lienol版本：  https://github.com/Lienol/openwrt 
+- lienol源码：  https://github.com/Lienol/openwrt 
+
+- immortalwrt源码： https://github.com/immortalwrt/immortalwrt
 
 
 ## 使用方法
