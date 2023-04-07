@@ -1,12 +1,12 @@
 **English** | [中文](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
 
 # 云编译OpenWrt系统固件
+本仓库云编译源码来自各位大佬分享，为了方便编译，做了一些修改，可以支持不同分支的opewrt源码，同时集成了打包img镜像的功能。
 
-[![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square&label=LICENSE)](https://github.com/P3TERX/Actions-OpenWrt/blob/master/LICENSE)
-![GitHub Stars](https://img.shields.io/github/stars/P3TERX/Actions-OpenWrt.svg?style=flat-square&label=Stars&logo=github)
-![GitHub Forks](https://img.shields.io/github/forks/P3TERX/Actions-OpenWrt.svg?style=flat-square&label=Forks&logo=github)
+官方版本：    git clone https://github.com/openwrt/openwrt           
+lede版本：    git clone https://github.com/coolsnowwolf/lede openwrt     
+lienol版本：  git clone -b 22.03 --single-branch https://github.com/Lienol/openwrt openwrt    分支为：22.03  
 
-A template for building OpenWrt with GitHub Actions
 
 ## 使用方法
 
