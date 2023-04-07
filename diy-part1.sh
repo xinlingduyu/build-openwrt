@@ -14,7 +14,7 @@
 sed -i 's/^#\(.*helloworld\)/\1/' feeds.conf.default
 
 # 添加插件和主题，取消#注释，代表启用，【电视盒子必须开启第一项（amlogic插件）】
-# echo 'src-git amlogic https://github.com/ophub/luci-app-amlogic' >>feeds.conf.default
+  echo 'src-git amlogic https://github.com/ophub/luci-app-amlogic' >>feeds.conf.default
 # echo 'src-git passwall_packages https://github.com/xiaorouji/openwrt-passwall.git;packages' >>feeds.conf.default
 # echo 'src-git passwall_luci https://github.com/xiaorouji/openwrt-passwall.git;luci' >>feeds.conf.default
 
