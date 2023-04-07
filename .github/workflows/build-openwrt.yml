@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: 其他设备openwrt编译固件
+name: Build OpenWrt
 
 on:
   repository_dispatch:
@@ -22,10 +22,10 @@ on:
 env:
   REPO_URL: https://github.com/Lienol/openwrt
   REPO_BRANCH: 22.03
-  FEEDS_CONF: Other-OpenWrt/feeds.conf.default
-  CONFIG_FILE: Other-OpenWrt/.config
-  DIY_P1_SH: Other-OpenWrt/diy-part1.sh
-  DIY_P2_SH: Other-OpenWrt/diy-part2.sh
+  FEEDS_CONF: feeds.conf.default
+  CONFIG_FILE: .config
+  DIY_P1_SH: diy-part1.sh
+  DIY_P2_SH: diy-part2.sh
   UPLOAD_BIN_DIR: false
   UPLOAD_FIRMWARE: true
   UPLOAD_COWTRANSFER: false

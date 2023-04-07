@@ -1,21 +1,44 @@
-# build-openwrt
+**English** | [中文](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
 
-这是一个支持在线云编译openwrt固件的仓库，源码来自各位大佬仓库，本人只是做了收集和部分修改，支持X86，电视盒子等！
+# Actions-OpenWrt
 
-# 一，编译源码
+[![LICENSE](https://img.shields.io/github/license/mashape/apistatus.svg?style=flat-square&label=LICENSE)](https://github.com/P3TERX/Actions-OpenWrt/blob/master/LICENSE)
+![GitHub Stars](https://img.shields.io/github/stars/P3TERX/Actions-OpenWrt.svg?style=flat-square&label=Stars&logo=github)
+![GitHub Forks](https://img.shields.io/github/forks/P3TERX/Actions-OpenWrt.svg?style=flat-square&label=Forks&logo=github)
 
-源码来自以下仓库
+A template for building OpenWrt with GitHub Actions
 
-【官方版本】  git clone https://github.com/openwrt/openwrt
+## Usage
 
-【lede版本】  git clone https://github.com/coolsnowwolf/lede
+- Click the [Use this template](https://github.com/P3TERX/Actions-OpenWrt/generate) button to create a new repository.
+- Generate `.config` files using [Lean's OpenWrt](https://github.com/coolsnowwolf/lede) source code. ( You can change it through environment variables in the workflow file. )
+- Push `.config` file to the GitHub repository.
+- Select `Build OpenWrt` on the Actions page.
+- Click the `Run workflow` button.
+- When the build is complete, click the `Artifacts` button in the upper right corner of the Actions page to download the binaries.
 
-【lienol版本】  git clone -b 22.03 --single-branch https://github.com/Lienol/openwrt
+## Tips
 
-# 二，使用方法
-如果你是电视盒子请使用TVBOX-OPENWRT,其他则使用
+- It may take a long time to create a `.config` file and build the OpenWrt firmware. Thus, before create repository to build your own firmware, you may check out if others have already built it which meet your needs by simply [search `Actions-Openwrt` in GitHub](https://github.com/search?q=Actions-openwrt).
+- Add some meta info of your built firmware (such as firmware architecture and installed packages) to your repository introduction, this will save others' time.
 
-1，修改.config
+## Credits
 
-有空在写！
+- [Microsoft Azure](https://azure.microsoft.com)
+- [GitHub Actions](https://github.com/features/actions)
+- [OpenWrt](https://github.com/openwrt/openwrt)
+- [Lean's OpenWrt](https://github.com/coolsnowwolf/lede)
+- [tmate](https://github.com/tmate-io/tmate)
+- [mxschmitt/action-tmate](https://github.com/mxschmitt/action-tmate)
+- [csexton/debugger-action](https://github.com/csexton/debugger-action)
+- [Cowtransfer](https://cowtransfer.com)
+- [WeTransfer](https://wetransfer.com/)
+- [Mikubill/transfer](https://github.com/Mikubill/transfer)
+- [softprops/action-gh-release](https://github.com/softprops/action-gh-release)
+- [ActionsRML/delete-workflow-runs](https://github.com/ActionsRML/delete-workflow-runs)
+- [dev-drprasad/delete-older-releases](https://github.com/dev-drprasad/delete-older-releases)
+- [peter-evans/repository-dispatch](https://github.com/peter-evans/repository-dispatch)
 
+## License
+
+[MIT](https://github.com/P3TERX/Actions-OpenWrt/blob/main/LICENSE) © [**P3TERX**](https://p3terx.com)
