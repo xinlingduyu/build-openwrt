@@ -10,5 +10,10 @@
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 
-# Modify default IP
+# -------------------------------  启动主源  -------------------------------
+#
+# #修改默认主题（FROM uci-theme-bootstrap CHANGE TO luci-theme-material）
+sed -i 's/luci-theme-bootstrap/luci-theme-material/g' ./feeds/luci/collections/luci/Makefile
+
+# 修改默认IP（Modify default IP）
 sed -i 's/192.168.1.1/192.168.1.99/g' package/base-files/files/bin/config_generate
