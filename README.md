@@ -35,7 +35,7 @@
    
      REPO_URL: https://github.com/Lienol/openwrt （修改成你想要的源码地址）
 	 
-     REPO_BRANCH: 22.03 （修改分支）
+     REPO_BRANCH: 22.03 （修改分支，如果没有分支的，直接填写main）
 
 
 4，添加插件或主题
