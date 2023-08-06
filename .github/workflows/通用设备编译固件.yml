@@ -150,39 +150,24 @@ jobs:
           df -hT ${PWD}
           echo "status=success" >> ${GITHUB_OUTPUT}
 
-    - name: Generate release tag
-      id: tag
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+    - name: 上传BIN目录
+      uses: actions/upload-artifact@master
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      with:
+        name: OpenWrt_bin
+        path: openwrt/bin
+
+    - name: 整理文件
+      id: organize
+      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
-        touch release.txt
-        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
-        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
-        echo "::set-output name=status::success"
+          rm -rf ./artifact/
+          mkdir -p ./artifact/
+          find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+          find openwrt/bin/targets/ -name "*uefi*img*" | xargs -i mv -f {} ./artifact/
 
-    - name: Upload firmware to release
-      uses: softprops/action-gh-release@v1
-      if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: 上传固件
+      uses: actions/upload-artifact@master
       with:
-        tag_name: ${{ steps.tag.outputs.release_tag }}
-        body_path: release.txt
-        files: ${{ env.FIRMWARE }}/*
-
-    - name: Delete workflow runs
-      uses: GitRML/delete-workflow-runs@main
-      with:
-        retain_days: 1
-        keep_minimum_runs: 3
-
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 3
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: OpenWrt_firmware
+        path: ./artifact/
