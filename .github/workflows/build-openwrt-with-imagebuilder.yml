@@ -1,185 +1,31 @@
-#=====================================================================================
+#============================================================================================
 # https://github.com/ophub/amlogic-s9xxx-openwrt
-# Description:   Build OpenWrt with Image Builder
-# Instructions:  https://openwrt.org/docs/guide-user/additional-software/imagebuilder
-# Download from: https://downloads.openwrt.org/releases
-#                https://downloads.immortalwrt.org/releases
-#=====================================================================================
+# Description: Build OpenWrt
+#============================================================================================
 
-name: Build OpenWrt with ImageBuilder
+name: 固件编译
 
 on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      releases_branch:
-        description: "Select the releases branch"
+      source_branch:
+        description: "Select the source branch"
         required: false
-        default: "openwrt:22.03.5"
+        default: "openwrt-main"
         type: choice
         options:
-          - openwrt:22.03.5
-          - openwrt:21.02.7
-          - openwrt:19.07.10
-          - openwrt:18.06.9
-          - immortalwrt:21.02.6
-      openwrt_board:
-        description: "Select device board"
-        required: false
-        default: "all"
-        type: choice
-        options:
-          - all
-          - s922x_s905x3_s905d_s912_s905l3a
-          - s905x-t95_s912-t95z-plus_s905l3-unt400g1
-          - s912_s912-m8s-pro_s922x_s922x-ct2000_s922x-reva
-          - smart-am40_station-m1_sw799_tn3399_vplus_zysj
-          - s905d
-          - s905d-ki-pro
-          - s905d-sml5442tw
-          - s905x
-          - s905x-tx9
-          - s905x-t95
-          - s905x-b860h
-          - s905x-tbee
-          - s905w
-          - s905w-w95
-          - s905w-x96w
-          - s905w-x96-mini
-          - s905l
-          - s905l2
-          - s905l2-wojia
-          - s905l2-e900v21e
-          - s905l3
-          - s905l3-cm211
-          - s905l3-unt400g1
-          - s905l3a
-          - s905l3a-cm311
-          - s905l3a-m401a
-          - s905l3b
-          - s905l3b-e900v22e
-          - s905l3b-e900v22d
-          - s905l3b-ip103h
-          - s905lb-q96-mini
-          - s905lb-r3300l
-          - s912
-          - s912-zyxq-fake
-          - s912-h96pro-plus
-          - s912-m8s-pro
-          - s912-t95z-plus
-          - s912-tx9-pro-3g
-          - s912-tx9-pro-2g
-          - s912-nexbox-a1
-          - s912-nexbox-a2
-          - s912-tx8-max
-          - s912-x92
-          - s912-phicomm-t1
-          - s905x2
-          - s905x2-x96max-2g
-          - s905x2-km3
-          - a311d
-          - s922x
-          - s922x-gtking
-          - s922x-gtkingpro-h
-          - s922x-reva
-          - s922x-odroid-n2
-          - s922x-ugoos-am6
-          - s922x-ct2000
-          - s905x3
-          - s905x3-hk1
-          - s905x3-x96max
-          - s905x3-h96max
-          - s905x3-ugoosx3
-          - s905x3-tx3
-          - s905x3-tx3-bz
-          - s905x3-a95xf3
-          - s905x3-a95xf3-gb
-          - s905x3-x96air
-          - s905x3-x96air-gb
-          - s905x3-ip1001m
-          - s905x3-q1
-          - s905x3-q2
-          - s905x3-a100
-          - s905x3-2101
-          - s905x3-whale
-          - s905x3-b
-          - s905
-          - s905-mxqpro-plus
-          - s905-beelink-mini
-          - rock5b
-          - h88k
-          - ipc-r
-          - r66s
-          - r68s
-          - h66k
-          - h68k
-          - h69k
-          - e25
-          - nanopi-r5s
-          - panther-x2
-          - eaidk-610
-          - king3399
-          - tn3399
-          - kylin3399
-          - hugsun-zm
-          - crrc
-          - smart-am40
-          - sw799
-          - zysj
-          - dg3399
-          - dlfr100
-          - emb3531
-          - beikeyun
-          - l1pro
-          - station-m1
-          - vplus
-          - tanix-tx6
-      openwrt_kernel:
-        description: "Select kernel version"
-        required: false
-        default: "5.15.1_6.1.1"
-        type: choice
-        options:
-          - 5.4.1_5.10.1
-          - 5.15.1_6.1.1
-          - 5.4.1
-          - 5.10.1
-          - 5.15.1
-          - 6.1.1
-      auto_kernel:
-        description: "Auto use the latest kernel"
-        required: false
-        default: true
-        type: boolean
-      kernel_repo:
-        description: "Set the kernel repository"
-        required: false
-        default: "ophub/kernel"
-        type: choice
-        options:
-          - ophub/kernel
-      kernel_usage:
-        description: "Set the tags of the stable kernel."
-        required: false
-        default: "stable"
-        type: choice
-        options:
-          - stable
-          - flippy
-          - dev
-          - beta
-      builder_name:
-        description: "Set OpenWrt builder signature."
-        required: false
-        default: "angel"
-        type: choice
-        options:
-          - angel
-          - yourname
+          - openwrt-main
+          - lede-master
+          - immortalwrt-master
+          - Lienol-master
 
 env:
+  FEEDS_CONF: config/${{ inputs.source_branch }}/feeds.conf.default
+  CONFIG_FILE: config/${{ inputs.source_branch }}/config
+  DIY_P1_SH: config/${{ inputs.source_branch }}/diy-part1.sh
+  DIY_P2_SH: config/${{ inputs.source_branch }}/diy-part2.sh
   TZ: America/New_York
-  IMAGEBUILDER_SH: config/imagebuilder/imagebuilder.sh
 
 jobs:
   build:
@@ -205,57 +51,162 @@ jobs:
           #sudo -E apt-get -y full-upgrade
           sudo -E apt-get -y autoremove --purge
           sudo -E apt-get clean
+          sudo mkdir -p /workdir
+          sudo chown ${USER}:${GROUPS} /workdir
           sudo timedatectl set-timezone "${TZ}"
           echo "status=success" >> ${GITHUB_OUTPUT}
 
-      - name: Build OpenWrt Rootfs [ ${{ inputs.releases_branch }} ]
-        id: imagebuilder
+      - name: Clone source code [ ${{ inputs.source_branch }} ]
+        id: codes
+        working-directory: /workdir
         if: ${{ steps.init.outputs.status }} == 'success' && !cancelled()
         run: |
-          RELEASES_BRANCH="${{ inputs.releases_branch }}"
-          chmod +x ${IMAGEBUILDER_SH}
-          ${IMAGEBUILDER_SH} ${RELEASES_BRANCH}
-          echo "RELEASES_TAG=${RELEASES_BRANCH/:/_}" >> ${GITHUB_ENV}
+          # Set up compilation source code
+          if [[ "${{ inputs.source_branch }}" == *"openwrt"* ]]; then
+              REPO_URL="https://github.com/openwrt/openwrt"
+              REPO_BRANCH="main"
+              TAGS_NAME="official"
+          elif [[ "${{ inputs.source_branch }}" == *"lede"* ]]; then
+              REPO_URL="https://github.com/coolsnowwolf/lede"
+              REPO_BRANCH="master"
+              TAGS_NAME="lede"
+          elif [[ "${{ inputs.source_branch }}" == *"immortalwrt"* ]]; then
+              REPO_URL="https://github.com/immortalwrt/immortalwrt"
+              REPO_BRANCH="master"
+              TAGS_NAME="immortalwrt"
+          elif [[ "${{ inputs.source_branch }}" == *"Lienol"* ]]; then
+              REPO_URL="https://github.com/Lienol/openwrt"
+              REPO_BRANCH="23.05"
+              TAGS_NAME="Lienol"
+          else
+              echo "Unknown source code repository."
+              exit 1
+          fi
+
+          # Clone source code
+          git clone -q --single-branch --depth=1 --branch=${REPO_BRANCH} ${REPO_URL} openwrt
+          ln -sf /workdir/openwrt ${GITHUB_WORKSPACE}/openwrt
+
+          # Set output information
+          echo "build_tag=OpenWrt_${TAGS_NAME}_${{ inputs.openwrt_storage }}_$(date +"%Y.%m")" >> ${GITHUB_OUTPUT}
+          echo -e "REPO_URL: [ ${REPO_URL} ]\nREPO_BRANCH: [ ${REPO_BRANCH} ]\nTAGS_NAME: [ ${TAGS_NAME} ]"
+          df -hT ${PWD}
           echo "status=success" >> ${GITHUB_OUTPUT}
 
-      - name: Clear server space
-        if: ${{ steps.imagebuilder.outputs.status }} == 'success' && !cancelled()
+      - name: Load custom feeds
+        run: |
+          [[ -f "${FEEDS_CONF}" ]] && cp -f ${FEEDS_CONF} openwrt/feeds.conf.default
+          chmod +x ${DIY_P1_SH}
+          cd openwrt/
+          ${GITHUB_WORKSPACE}/${DIY_P1_SH}
+
+      - name: Update feeds
+        run: cd openwrt/ && ./scripts/feeds update -a
+
+      - name: Install feeds
+        run: cd openwrt/ && ./scripts/feeds install -a
+
+      - name: Load custom configuration
+        run: |
+          [[ -d "files" ]] && mv -f files openwrt/files
+          [[ -e "${CONFIG_FILE}" ]] && cp -f ${CONFIG_FILE} openwrt/.config
+          chmod +x ${DIY_P2_SH}
+          cd openwrt/
+          ${GITHUB_WORKSPACE}/${DIY_P2_SH}
+
+      - name: Download package
+        id: package
         run: |
           cd openwrt/
-          rm -rf $(ls . | grep -v "^bin$" | xargs) 2>/dev/null
-          df -hT ${PWD}
+          make defconfig
+          make download -j8
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
 
-      - name: Packaging OpenWrt
-        if: ${{ steps.imagebuilder.outputs.status }} == 'success' && !cancelled()
-        uses: ophub/amlogic-s9xxx-openwrt@main
-        with:
-          openwrt_path: openwrt/bin/targets/*/*/*rootfs.tar.gz
-          openwrt_board: ${{ inputs.openwrt_board }}
-          openwrt_kernel: ${{ inputs.openwrt_kernel }}
-          auto_kernel: ${{ inputs.auto_kernel }}
-          kernel_repo: ${{ inputs.kernel_repo }}
-          kernel_usage: ${{ inputs.kernel_usage }}
-          builder_name: ${{ inputs.builder_name }}
-          gh_token: ${{ secrets.GH_TOKEN }}
+      - name: Compile the OpenWrt
+        id: compile
+        run: |
+          cd openwrt/
+          echo -e "$(nproc) thread compile"
+          make -j$(($(nproc) + 1)) V=s || make -j1 || make -j1 V=s
+          echo "status=success" >> ${GITHUB_OUTPUT}
 
-      - name: Upload the packaged OpenWrt
-        uses: ncipollo/release-action@main
-        if: ${{ env.PACKAGED_STATUS }} == 'success' && !cancelled()
-        with:
-          tag: OpenWrt_imagebuilder_${{ env.RELEASES_TAG }}_${{ env.PACKAGED_OUTPUTDATE }}
-          artifacts: ${{ env.PACKAGED_OUTPUTPATH }}/*
-          allowUpdates: true
-          removeArtifacts: false
-          replacesArtifacts: true
-          token: ${{ secrets.GH_TOKEN }}
-          body: |
-            ### OpenWrt Image information
-            - Default IP: 192.168.1.1
-            - Default username: root
-            - Default password: password
-            - Default WIFI name: OpenWrt
-            - Default WIFI password: none
-            ### Install to EMMC
-            - Login to OpenWrt → System → Amlogic Service → Install OpenWrt
-            ### OpenWrt Image Verification
-            - sha256sum
+      - name: Check space usage
+      if: (!cancelled())
+      run: df -hT
+
+    - name: Upload bin directory
+      uses: actions/upload-artifact@main
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      with:
+        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: openwrt/bin
+
+    - name: Organize files
+      id: organize
+      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      run: |
+        cd openwrt/bin/targets/*/*
+        rm -rf packages
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
+
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && !cancelled()
+      with:
+        name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: ${{ env.FIRMWARE }}
+
+    - name: Upload firmware to cowtransfer
+      id: cowtransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+
+    - name: Upload firmware to WeTransfer
+      id: wetransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+
+    - name: Generate release tag
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
+        touch release.txt
+        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
+        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
+        echo "::set-output name=status::success"
+
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@v1
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: ${{ env.FIRMWARE }}/*
+
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 1
+        keep_minimum_runs: 3
+
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        keep_latest: 3
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
