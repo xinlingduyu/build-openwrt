@@ -18,6 +18,7 @@ on:
           - openwrt-main
           - lede-master
           - immortalwrt-master
+          - Lienol-master
       openwrt_board:
         description: "Select device board"
         required: false
