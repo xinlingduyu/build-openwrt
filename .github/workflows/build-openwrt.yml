@@ -237,7 +237,7 @@ jobs:
               TAGS_NAME="immortalwrt"
           elif [[ "${{ inputs.source_branch }}" == *"Lienol"* ]]; then
               REPO_URL="https://github.com/Lienol/openwrt"
-              REPO_BRANCH="master"
+              REPO_BRANCH="23.05"
               TAGS_NAME="Lienol"
           else
               echo "Unknown source code repository."
