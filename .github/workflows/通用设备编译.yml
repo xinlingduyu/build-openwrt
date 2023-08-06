@@ -14,89 +14,119 @@ on:
   repository_dispatch:
   workflow_dispatch:
     inputs:
-      ssh:
-        description: 'SSH connection to Actions'
+      source_branch:
+        description: "Select the source branch"
         required: false
-        default: 'false'
+        default: "openwrt-main"
+        type: choice
+        options:
+          - openwrt-main
+          - lede-master
+          - immortalwrt-master
+          - Lienol-master
 
 env:
-  REPO_URL: https://github.com/Lienol/openwrt
-  REPO_BRANCH: 22.03
-  FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: .config
-  DIY_P1_SH: diy-part1.sh
-  DIY_P2_SH: diy-part2.sh
-  UPLOAD_BIN_DIR: false
-  UPLOAD_FIRMWARE: true
-  UPLOAD_COWTRANSFER: false
-  UPLOAD_WETRANSFER: false
-  UPLOAD_RELEASE: false
-  TZ: Asia/Shanghai
+  FEEDS_CONF: config/${{ inputs.source_branch }}/feeds.conf.default
+  CONFIG_FILE: config/${{ inputs.source_branch }}/config
+  DIY_P1_SH: config/${{ inputs.source_branch }}/diy-part1.sh
+  DIY_P2_SH: config/${{ inputs.source_branch }}/diy-part2.sh
+  TZ: America/New_York
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
+    if: ${{ github.event.repository.owner.id }} == ${{ github.event.sender.id }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@main
+      - name: Checkout
+        uses: actions/checkout@v3
 
-    - name: Initialization environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
-        sudo -E apt-get -qq update
-        sudo -E apt-get -qq install $(curl -fsSL git.io/depends-ubuntu-2004)
-        sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean
-        sudo timedatectl set-timezone "$TZ"
-        sudo mkdir -p /workdir
-        sudo chown $USER:$GROUPS /workdir
+      - name: Initialization environment
+        id: init
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          docker rmi `docker images -q`
+          [[ -n "${AGENT_TOOLSDIRECTORY}" ]] && sudo rm -rf "${AGENT_TOOLSDIRECTORY}"
+          sudo rm -rf /usr/share/dotnet /etc/apt/sources.list.d /usr/local/lib/android 2>/dev/null
+          sudo -E apt-get -y update
+          sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true
+          sudo -E apt-get -y install $(curl -fsSL https://is.gd/depend_ubuntu2204_openwrt)
+          sudo -E systemctl daemon-reload
+          #sudo -E apt-get -y full-upgrade
+          sudo -E apt-get -y autoremove --purge
+          sudo -E apt-get clean
+          sudo mkdir -p /workdir
+          sudo chown ${USER}:${GROUPS} /workdir
+          sudo timedatectl set-timezone "${TZ}"
+          echo "status=success" >> ${GITHUB_OUTPUT}
 
-    - name: Clone source code
-      working-directory: /workdir
-      run: |
-        df -hT $PWD
-        git clone $REPO_URL -b $REPO_BRANCH openwrt
-        ln -sf /workdir/openwrt $GITHUB_WORKSPACE/openwrt
+      - name: Clone source code [ ${{ inputs.source_branch }} ]
+        id: codes
+        working-directory: /workdir
+        if: ${{ steps.init.outputs.status }} == 'success' && !cancelled()
+        run: |
+          # Set up compilation source code
+          if [[ "${{ inputs.source_branch }}" == *"openwrt"* ]]; then
+              REPO_URL="https://github.com/openwrt/openwrt"
+              REPO_BRANCH="main"
+              TAGS_NAME="official"
+          elif [[ "${{ inputs.source_branch }}" == *"lede"* ]]; then
+              REPO_URL="https://github.com/coolsnowwolf/lede"
+              REPO_BRANCH="master"
+              TAGS_NAME="lede"
+          elif [[ "${{ inputs.source_branch }}" == *"immortalwrt"* ]]; then
+              REPO_URL="https://github.com/immortalwrt/immortalwrt"
+              REPO_BRANCH="master"
+              TAGS_NAME="immortalwrt"
+          elif [[ "${{ inputs.source_branch }}" == *"Lienol"* ]]; then
+              REPO_URL="https://github.com/Lienol/openwrt"
+              REPO_BRANCH="23.05"
+              TAGS_NAME="Lienol"
+          else
+              echo "Unknown source code repository."
+              exit 1
+          fi
 
-    - name: Load custom feeds
-      run: |
-        [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
-        chmod +x $DIY_P1_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P1_SH
+          # Clone source code
+          git clone -q --single-branch --depth=1 --branch=${REPO_BRANCH} ${REPO_URL} openwrt
+          ln -sf /workdir/openwrt ${GITHUB_WORKSPACE}/openwrt
 
-    - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a
+          # Set output information
+          echo "build_tag=OpenWrt_${TAGS_NAME}_${{ inputs.openwrt_storage }}_$(date +"%Y.%m")" >> ${GITHUB_OUTPUT}
+          echo -e "REPO_URL: [ ${REPO_URL} ]\nREPO_BRANCH: [ ${REPO_BRANCH} ]\nTAGS_NAME: [ ${TAGS_NAME} ]"
+          df -hT ${PWD}
+          echo "status=success" >> ${GITHUB_OUTPUT}
 
-    - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
+      - name: Load custom feeds
+        run: |
+          [[ -f "${FEEDS_CONF}" ]] && cp -f ${FEEDS_CONF} openwrt/feeds.conf.default
+          chmod +x ${DIY_P1_SH}
+          cd openwrt/
+          ${GITHUB_WORKSPACE}/${DIY_P1_SH}
 
-    - name: Load custom configuration
-      run: |
-        [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
+      - name: Update feeds
+        run: cd openwrt/ && ./scripts/feeds update -a
 
-    - name: SSH connection to Actions
-      uses: P3TERX/ssh2actions@v1.0.0
-      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-      env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      - name: Install feeds
+        run: cd openwrt/ && ./scripts/feeds install -a
 
-    - name: Download package
-      id: package
-      run: |
-        cd openwrt
-        make defconfig
-        make download -j8
-        find dl -size -1024c -exec ls -l {} \;
-        find dl -size -1024c -exec rm -f {} \;
+      - name: Load custom configuration
+        run: |
+          [[ -d "files" ]] && mv -f files openwrt/files
+          [[ -e "${CONFIG_FILE}" ]] && cp -f ${CONFIG_FILE} openwrt/.config
+          chmod +x ${DIY_P2_SH}
+          cd openwrt/
+          ${GITHUB_WORKSPACE}/${DIY_P2_SH}
+
+      - name: Download package
+        id: package
+        run: |
+          cd openwrt/
+          make defconfig
+          make download -j8
+          find dl -size -1024c -exec ls -l {} \;
+          find dl -size -1024c -exec rm -f {} \;
 
     - name: Compile the firmware
       id: compile
