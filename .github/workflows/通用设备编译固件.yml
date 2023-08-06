@@ -131,43 +131,62 @@ jobs:
           make -j$(($(nproc) + 1)) V=s || make -j1 || make -j1 V=s
           echo "status=success" >> ${GITHUB_OUTPUT}
 
-      - name: Clear server space
-        id: clean
-        if: ${{ steps.compile.outputs.status }} == 'success' && !cancelled()
-        run: |
-          # Clean up server space
-          cd openwrt/
-          mkdir output
-          cp -f bin/targets/*/*/*rootfs.tar.gz output/
-          cp -f .config output/config
-          rm -rf $(ls . | grep -v "^output$" | xargs) 2>/dev/null
+      - name :检查空间使用情况
+      如果：（！取消（））
+      运行：df -hT
 
-          # Generate sha256sum file
-          cd output/
-          for file in *; do [[ ! -d "${file}" ]] && sha256sum "${file}" >"${file}.sha"; done
+    - name :上传bin目录
+      使用：actions/upload-artifact@main
+      if : steps.compile.outputs.status == '成功' && env.UPLOAD_BIN_DIR == 'true'
+      与：
+        名称：OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        路径：openwrt/bin
 
-          # Set output information
-          df -hT ${PWD}
-          echo "status=success" >> ${GITHUB_OUTPUT}
+    -名称：组织文件
+      id：组织
+      if : env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      运行：|
+        cd openwrt/bin/targets/*/*
+        rm -rf 包
+        echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+        echo "::set-output name=status::success"
+    - name :上传固件目录
+      使用：actions/upload-artifact@main
+      if : steps.organize.outputs.status == '成功' && !cancelled()
+      与：
+        名称：OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        路径：${{ env.FIRMWARE }}
+    
+    - name :生成发布标签
+      id：标签
+      if : env.UPLOAD_RELEASE == 'true' && !cancelled()
+      运行：|
+        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
+        触摸释放.txt
+        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
+        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
+        echo "::set-output name=status::success"
+    - name :上传要发布的固件
+      使用：softprops/action-gh-release@v1
+      if : steps.tag.outputs.status == '成功' && !cancelled()
+      环境：
+        GITHUB_TOKEN : ${{ Secrets.GITHUB_TOKEN }}
+      与：
+        标签名称：${{steps.tag.outputs.release_tag}}
+        body_path :发布.txt
+        文件：${{ env.FIRMWARE }}/*
 
-    - name: 上传BIN目录
-      uses: actions/upload-artifact@master
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
-      with:
-        name: OpenWrt_bin
-        path: openwrt/bin
+    -名称：删除工作流程运行
+      使用：GitRML/delete-workflow-runs@main
+      与：
+        保留天数：1
+        保持最小运行次数：3
 
-    - name: 整理文件
-      id: organize
-      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
-      run: |
-          rm -rf ./artifact/
-          mkdir -p ./artifact/
-          find openwrt/bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
-          find openwrt/bin/targets/ -name "*uefi*img*" | xargs -i mv -f {} ./artifact/
-
-    - name: 上传固件
-      uses: actions/upload-artifact@master
-      with:
-        name: OpenWrt_firmware
-        path: ./artifact/
+    -名称：删除旧版本
+      使用：dev-drprasad/delete-older-releases@v0.1.0
+      if : env.UPLOAD_RELEASE == 'true' && !cancelled()
+      与：
+        保持最新：3
+        删除标签：true
+      环境：
+        GITHUB_TOKEN : ${{ Secrets.GITHUB_TOKEN }}
