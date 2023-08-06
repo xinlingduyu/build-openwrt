@@ -131,62 +131,78 @@ jobs:
           make -j$(($(nproc) + 1)) V=s || make -j1 || make -j1 V=s
           echo "status=success" >> ${GITHUB_OUTPUT}
 
-    - name :检查空间使用情况
-      如果：（！取消（））
-      运行：df -hT
+     - name: Check space usage
+       if: (!cancelled())
+       run: df -hT
 
-    - name :上传bin目录
-      使用：actions/upload-artifact@main
-      if : steps.compile.outputs.status == '成功' && env.UPLOAD_BIN_DIR == 'true'
-      与：
-        名称：OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        路径：openwrt/bin
+    - name: Upload bin directory
+      uses: actions/upload-artifact@main
+      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
+      with:
+        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: openwrt/bin
 
-    -名称：组织文件
-      id：组织
-      if : env.UPLOAD_FIRMWARE == 'true' && !cancelled()
-      运行：|
+    - name: Organize files
+      id: organize
+      if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
+      run: |
         cd openwrt/bin/targets/*/*
-        rm -rf 包
+        rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
-    - name :上传固件目录
-      使用：actions/upload-artifact@main
-      if : steps.organize.outputs.status == '成功' && !cancelled()
-      与：
-        名称：OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        路径：${{ env.FIRMWARE }}
-    
-    - name :生成发布标签
-      id：标签
-      if : env.UPLOAD_RELEASE == 'true' && !cancelled()
-      运行：|
+    - name: Upload firmware directory
+      uses: actions/upload-artifact@main
+      if: steps.organize.outputs.status == 'success' && !cancelled()
+      with:
+        name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
+        path: ${{ env.FIRMWARE }}
+
+    - name: Upload firmware to cowtransfer
+      id: cowtransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress ${FIRMWARE} 2>&1 | tee cowtransfer.log
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
+    - name: Upload firmware to WeTransfer
+      id: wetransfer
+      if: steps.organize.outputs.status == 'success' && env.UPLOAD_WETRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer wet -s -p 16 --no-progress ${FIRMWARE} 2>&1 | tee wetransfer.log
+        echo "::warning file=wetransfer.com::$(cat wetransfer.log | grep https)"
+        echo "::set-output name=url::$(cat wetransfer.log | grep https | cut -f3 -d" ")"
+    - name: Generate release tag
+      id: tag
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
         echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
-        触摸释放.txt
+        touch release.txt
         [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [Cowtransfer](${{ steps.cowtransfer.outputs.url }})" >> release.txt
         [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [WeTransfer](${{ steps.wetransfer.outputs.url }})" >> release.txt
         echo "::set-output name=status::success"
-    - name :上传要发布的固件
-      使用：softprops/action-gh-release@v1
-      if : steps.tag.outputs.status == '成功' && !cancelled()
-      环境：
-        GITHUB_TOKEN : ${{ Secrets.GITHUB_TOKEN }}
-      与：
-        标签名称：${{steps.tag.outputs.release_tag}}
-        body_path :发布.txt
-        文件：${{ env.FIRMWARE }}/*
+    - name: Upload firmware to release
+      uses: softprops/action-gh-release@v1
+      if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: ${{ env.FIRMWARE }}/*
 
-    -名称：删除工作流程运行
-      使用：GitRML/delete-workflow-runs@main
-      与：
-        保留天数：1
-        保持最小运行次数：3
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 1
+        keep_minimum_runs: 3
 
-    -名称：删除旧版本
-      使用：dev-drprasad/delete-older-releases@v0.1.0
-      if : env.UPLOAD_RELEASE == 'true' && !cancelled()
-      与：
-        保持最新：3
-        删除标签：true
-      环境：
-        GITHUB_TOKEN : ${{ Secrets.GITHUB_TOKEN }}
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        keep_latest: 3
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
