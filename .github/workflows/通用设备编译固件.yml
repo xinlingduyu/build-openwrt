@@ -192,16 +192,3 @@ jobs:
          delete_tags: true
        env:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-
-            ### OpenWrt Image information
-            - Default IP: 192.168.1.1
-            - Default username: root
-            - Default password: password
-            - Default WIFI name: OpenWrt
-            - Default WIFI password: none
-            ### Install to EMMC
-            - Login to OpenWrt → System → Amlogic Service → Install OpenWrt
-            ### OpenWrt Image Verification
-            - sha256sum
