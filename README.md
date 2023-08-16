@@ -15,9 +15,9 @@
 
 ### 操作教程由“实用技能”提供 @shiyongjineng
 
-#### 观看视频教程↓↓点击下方↓↓的图片进行观看！
+#### 观看视频教程↓↓点击下方↓↓进行观看！
 
-[![在线编译教程](https://i.ytimg.com/vi/6j4ofS0GT38/maxresdefault.jpg)](https://www.youtube.com/watch?v=6j4ofS0GT38 "在线编译教程")
+[![openwrt在线编译教程](https://res.cloudinary.com/marcomontalbano/image/upload/v1692156705/video_to_markdown/images/youtube--6j4ofS0GT38-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=6j4ofS0GT38 "openwrt在线编译教程")
 
 #### 或者复制↓↓下方地址↓↓到浏览器播放！
 https://www.youtube.com/watch?v=6j4ofS0GT38
