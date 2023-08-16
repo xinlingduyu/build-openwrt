@@ -13,9 +13,10 @@
 
 - immortalwrt源码： https://github.com/immortalwrt/immortalwrt
 
-操作教程：https://www.youtube.com/watch?v=6j4ofS0GT38
+操作教程由“实用技能”提供 @shiyongjineng
+：https://www.youtube.com/watch?v=6j4ofS0GT38
 
-[![NetFlix on UWP](https://res.cloudinary.com/marcomontalbano/image/upload/v1587315555/video_to_markdown/images/youtube--2qqYywttue4-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=6j4ofS0GT38"NetFlix on UWP")
+[![在线编译教程](https://i.ytimg.com/vi/6j4ofS0GT38/maxresdefault.jpg)](https://www.youtube.com/watch?v=6j4ofS0GT38 "在线编译教程")
 
 ## 使用方法
 
