@@ -13,13 +13,13 @@
 
 - immortalwrt源码： https://github.com/immortalwrt/immortalwrt
 
-## 操作教程由“实用技能”提供 @shiyongjineng
+### 操作教程由“实用技能”提供 @shiyongjineng
 
-### ↓↓↓↓↓↓↓↓↓点击下方↓↓↓↓↓↓↓↓↓的图片进行观看！
+#### 观看视频教程↓↓点击下方↓↓的图片进行观看！
 
 [![在线编译教程](https://i.ytimg.com/vi/6j4ofS0GT38/maxresdefault.jpg)](https://www.youtube.com/watch?v=6j4ofS0GT38 "在线编译教程")
 
-### 或者复制↓↓↓↓↓下方地址↓↓↓↓↓↓↓到浏览器播放！
+#### 或者复制↓↓下方地址↓↓到浏览器播放！
 https://www.youtube.com/watch?v=6j4ofS0GT38
 
 ## 使用方法
