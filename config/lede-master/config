@@ -171,6 +171,7 @@ CONFIG_TARGET_ramips_mt7621=y
 # CONFIG_TARGET_ramips_mt7621_DEVICE_tenbay_t-mb5eu-v01 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_thunder_timecloud is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_totolink_a7000r is not set
+CONFIG_TARGET_ramips_mt7621_DEVICE_C8_571=y
 # CONFIG_TARGET_ramips_mt7621_DEVICE_totolink_x5000r is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_tplink_archer-a6-v3 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_tplink_archer-c6-v3 is not set
@@ -202,7 +203,6 @@ CONFIG_TARGET_ramips_mt7621=y
 # CONFIG_TARGET_ramips_mt7621_DEVICE_xzwifi_creativebox-v1 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_youhua_wr1200js is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_youku_yk-l2 is not set
-CONFIG_TARGET_ramips_mt7621_DEVICE_C8-571=y
 # CONFIG_TARGET_ramips_mt7621_DEVICE_zbtlink_zbt-we1326 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_zbtlink_zbt-we3526 is not set
 # CONFIG_TARGET_ramips_mt7621_DEVICE_zbtlink_zbt-wg2626 is not set
@@ -216,7 +216,7 @@ CONFIG_HAS_SUBTARGETS=y
 CONFIG_HAS_DEVICES=y
 CONFIG_TARGET_BOARD="ramips"
 CONFIG_TARGET_SUBTARGET="mt7621"
-CONFIG_TARGET_PROFILE="DEVICE_C8-571"
+CONFIG_TARGET_PROFILE="DEVICE_C8_571"
 CONFIG_TARGET_ARCH_PACKAGES="mipsel_24kc"
 CONFIG_DEFAULT_TARGET_OPTIMIZATION="-Os -pipe -mno-branch-likely -mips32r2 -mtune=24kc"
 CONFIG_CPU_TYPE="24kc"
@@ -249,6 +249,7 @@ CONFIG_DEFAULT_kmod-mtk-hnat=y
 CONFIG_DEFAULT_kmod-nf-nathelper=y
 CONFIG_DEFAULT_kmod-nf-nathelper-extra=y
 CONFIG_DEFAULT_kmod-tun=y
+CONFIG_DEFAULT_kmod-usb3=y
 CONFIG_DEFAULT_libc=y
 CONFIG_DEFAULT_libgcc=y
 CONFIG_DEFAULT_libustream-openssl=y
@@ -259,6 +260,7 @@ CONFIG_DEFAULT_luci-app-arpbind=y
 CONFIG_DEFAULT_luci-app-autoreboot=y
 CONFIG_DEFAULT_luci-app-ddns=y
 CONFIG_DEFAULT_luci-app-filetransfer=y
+CONFIG_DEFAULT_luci-app-mtwifi=y
 CONFIG_DEFAULT_luci-app-nlbwmon=y
 CONFIG_DEFAULT_luci-app-ssr-plus=y
 CONFIG_DEFAULT_luci-app-turboacc=y
@@ -276,11 +278,11 @@ CONFIG_DEFAULT_ppp=y
 CONFIG_DEFAULT_ppp-mod-pppoe=y
 CONFIG_DEFAULT_procd=y
 CONFIG_DEFAULT_swconfig=y
+CONFIG_DEFAULT_uboot-envtools=y
 CONFIG_DEFAULT_uci=y
 CONFIG_DEFAULT_uclient-fetch=y
 CONFIG_DEFAULT_urandom-seed=y
 CONFIG_DEFAULT_urngd=y
-CONFIG_DEFAULT_wpad-openssl=y
 CONFIG_HAS_TESTING_KERNEL=y
 CONFIG_AUDIO_SUPPORT=y
 CONFIG_GPIO_SUPPORT=y
@@ -315,31 +317,24 @@ CONFIG_EXTERNAL_CPIO=""
 #
 # Root filesystem archives
 #
-CONFIG_TARGET_ROOTFS_CPIOGZ=y
-CONFIG_TARGET_ROOTFS_TARGZ=y
+# CONFIG_TARGET_ROOTFS_CPIOGZ is not set
+# CONFIG_TARGET_ROOTFS_TARGZ is not set
 
 #
 # Root filesystem images
 #
-CONFIG_TARGET_ROOTFS_EXT4FS=y
-CONFIG_TARGET_EXT4_RESERVED_PCT=0
-CONFIG_TARGET_EXT4_BLOCKSIZE_4K=y
-# CONFIG_TARGET_EXT4_BLOCKSIZE_2K is not set
-# CONFIG_TARGET_EXT4_BLOCKSIZE_1K is not set
-CONFIG_TARGET_EXT4_BLOCKSIZE=4096
-# CONFIG_TARGET_EXT4_JOURNAL is not set
+# CONFIG_TARGET_ROOTFS_EXT4FS is not set
 CONFIG_TARGET_ROOTFS_SQUASHFS=y
 CONFIG_TARGET_SQUASHFS_BLOCK_SIZE=256
 CONFIG_TARGET_UBIFS_FREE_SPACE_FIXUP=y
 CONFIG_TARGET_UBIFS_JOURNAL_SIZE=""
-CONFIG_TARGET_IMAGES_GZIP=y
 
 #
 # Image Options
 #
 CONFIG_TARGET_KERNEL_PARTSIZE=16
 CONFIG_TARGET_ROOTFS_PARTSIZE=160
-CONFIG_TARGET_ROOTFS_PERSIST_VAR=y
+# CONFIG_TARGET_ROOTFS_PERSIST_VAR is not set
 # end of Target Images
 
 # CONFIG_EXPERIMENTAL is not set
@@ -631,8 +626,10 @@ CONFIG_TARGET_INIT_SUPPRESS_STDERR=y
 CONFIG_PER_FEED_REPO=y
 CONFIG_FEED_packages=y
 CONFIG_FEED_luci=y
+CONFIG_FEED_5g=y
 CONFIG_FEED_routing=y
 CONFIG_FEED_telephony=y
+CONFIG_FEED_3ginfo=y
 
 #
 # Base system
@@ -1818,7 +1815,7 @@ CONFIG_PACKAGE_urandom-seed=y
 CONFIG_PACKAGE_urngd=y
 CONFIG_PACKAGE_usign=y
 # CONFIG_PACKAGE_uxc is not set
-# CONFIG_PACKAGE_wireless-tools is not set
+CONFIG_PACKAGE_wireless-tools=y
 # CONFIG_PACKAGE_zram-swap is not set
 # CONFIG_PACKAGE_zyxel-bootconfig is not set
 # end of Base system
@@ -2683,7 +2680,7 @@ CONFIG_PACKAGE_kmod-nfnetlink=y
 # CONFIG_PACKAGE_kmod-libphy is not set
 CONFIG_PACKAGE_kmod-macvlan=y
 # CONFIG_PACKAGE_kmod-mdio-gpio is not set
-CONFIG_PACKAGE_kmod-mii=y
+# CONFIG_PACKAGE_kmod-mii is not set
 # CONFIG_PACKAGE_kmod-mlx4-core is not set
 # CONFIG_PACKAGE_kmod-mlx5-core is not set
 # CONFIG_PACKAGE_kmod-mlxfw is not set
@@ -2927,7 +2924,7 @@ CONFIG_PACKAGE_kmod-thermal=y
 # USB Support
 #
 # CONFIG_PACKAGE_kmod-chaoskey is not set
-CONFIG_PACKAGE_kmod-usb-acm=y
+# CONFIG_PACKAGE_kmod-usb-acm is not set
 # CONFIG_PACKAGE_kmod-usb-atm is not set
 # CONFIG_PACKAGE_kmod-usb-cdns is not set
 # CONFIG_PACKAGE_kmod-usb-cdns3 is not set
@@ -2940,14 +2937,14 @@ CONFIG_PACKAGE_kmod-usb-core=y
 # CONFIG_PACKAGE_kmod-usb-hid-cp2112 is not set
 # CONFIG_PACKAGE_kmod-usb-hid-mcp2221 is not set
 # CONFIG_PACKAGE_kmod-usb-ledtrig-usbport is not set
-CONFIG_PACKAGE_kmod-usb-net=y
+# CONFIG_PACKAGE_kmod-usb-net is not set
 # CONFIG_PACKAGE_kmod-usb-net-aqc111 is not set
 # CONFIG_PACKAGE_kmod-usb-net-asix is not set
 # CONFIG_PACKAGE_kmod-usb-net-asix-ax88179 is not set
 # CONFIG_PACKAGE_kmod-usb-net-cdc-eem is not set
-CONFIG_PACKAGE_kmod-usb-net-cdc-ether=y
-CONFIG_PACKAGE_kmod-usb-net-cdc-mbim=y
-CONFIG_PACKAGE_kmod-usb-net-cdc-ncm=y
+# CONFIG_PACKAGE_kmod-usb-net-cdc-ether is not set
+# CONFIG_PACKAGE_kmod-usb-net-cdc-mbim is not set
+# CONFIG_PACKAGE_kmod-usb-net-cdc-ncm is not set
 # CONFIG_PACKAGE_kmod-usb-net-cdc-subset is not set
 # CONFIG_PACKAGE_kmod-usb-net-dm9601-ether is not set
 # CONFIG_PACKAGE_kmod-usb-net-hso is not set
@@ -2959,8 +2956,8 @@ CONFIG_PACKAGE_kmod-usb-net-cdc-ncm=y
 # CONFIG_PACKAGE_kmod-usb-net-mcs7830 is not set
 # CONFIG_PACKAGE_kmod-usb-net-pegasus is not set
 # CONFIG_PACKAGE_kmod-usb-net-pl is not set
-CONFIG_PACKAGE_kmod-usb-net-qmi-wwan=y
-CONFIG_PACKAGE_kmod-usb-net-rndis=y
+# CONFIG_PACKAGE_kmod-usb-net-qmi-wwan is not set
+# CONFIG_PACKAGE_kmod-usb-net-rndis is not set
 # CONFIG_PACKAGE_kmod-usb-net-rtl8150 is not set
 # CONFIG_PACKAGE_kmod-usb-net-rtl8152 is not set
 # CONFIG_PACKAGE_kmod-usb-net-rtl8152-vendor is not set
@@ -3000,11 +2997,13 @@ CONFIG_PACKAGE_kmod-usb-serial-wwan=y
 # CONFIG_PACKAGE_kmod-usb-storage-extras is not set
 # CONFIG_PACKAGE_kmod-usb-storage-uas is not set
 # CONFIG_PACKAGE_kmod-usb-uhci is not set
-CONFIG_PACKAGE_kmod-usb-wdm=y
+# CONFIG_PACKAGE_kmod-usb-wdm is not set
+CONFIG_PACKAGE_kmod-usb-xhci-hcd=y
+CONFIG_PACKAGE_kmod-usb-xhci-mtk=y
 # CONFIG_PACKAGE_kmod-usb-yealink is not set
 # CONFIG_PACKAGE_kmod-usb2 is not set
 # CONFIG_PACKAGE_kmod-usb2-pci is not set
-# CONFIG_PACKAGE_kmod-usb3 is not set
+CONFIG_PACKAGE_kmod-usb3=y
 # CONFIG_PACKAGE_kmod-usbip is not set
 # CONFIG_PACKAGE_kmod-usbip-client is not set
 # CONFIG_PACKAGE_kmod-usbip-server is not set
@@ -3056,10 +3055,11 @@ CONFIG_PACKAGE_kmod-usb-wdm=y
 #
 # WWAN Support
 #
-CONFIG_PACKAGE_kmod-gobinet=y
+# CONFIG_PACKAGE_kmod-gobinet is not set
 # CONFIG_PACKAGE_kmod-pcie_mhi is not set
-CONFIG_PACKAGE_kmod-qmi_wwan_f=y
-CONFIG_PACKAGE_kmod-qmi_wwan_q=y
+# CONFIG_PACKAGE_kmod-pcie_mhi_fb is not set
+# CONFIG_PACKAGE_kmod-qmi_wwan_f is not set
+# CONFIG_PACKAGE_kmod-qmi_wwan_q is not set
 # CONFIG_PACKAGE_kmod-sprd_pcie is not set
 # end of WWAN Support
 
@@ -3098,6 +3098,7 @@ CONFIG_PACKAGE_kmod-mt76-core=y
 # CONFIG_PACKAGE_kmod-mt7603e is not set
 # CONFIG_PACKAGE_kmod-mt7615-firmware is not set
 # CONFIG_PACKAGE_kmod-mt7615d is not set
+# CONFIG_MTK_CHIP_MT7615E is not set
 # CONFIG_PACKAGE_kmod-mt7615d_dbdc is not set
 # CONFIG_PACKAGE_kmod-mt7615e is not set
 # CONFIG_PACKAGE_kmod-mt7622-firmware is not set
@@ -4750,32 +4751,32 @@ CONFIG_PACKAGE_luci-base=y
 #
 # Translations
 #
-# CONFIG_LUCI_LANG_ca is not set
-# CONFIG_LUCI_LANG_cs is not set
-# CONFIG_LUCI_LANG_de is not set
-# CONFIG_LUCI_LANG_el is not set
-# CONFIG_LUCI_LANG_en is not set
-# CONFIG_LUCI_LANG_es is not set
-# CONFIG_LUCI_LANG_fr is not set
-# CONFIG_LUCI_LANG_he is not set
-# CONFIG_LUCI_LANG_hu is not set
-# CONFIG_LUCI_LANG_it is not set
-# CONFIG_LUCI_LANG_ja is not set
-# CONFIG_LUCI_LANG_ko is not set
-# CONFIG_LUCI_LANG_ms is not set
-# CONFIG_LUCI_LANG_no is not set
-# CONFIG_LUCI_LANG_pl is not set
-# CONFIG_LUCI_LANG_pt is not set
-# CONFIG_LUCI_LANG_pt-br is not set
-# CONFIG_LUCI_LANG_ro is not set
-# CONFIG_LUCI_LANG_ru is not set
-# CONFIG_LUCI_LANG_sk is not set
-# CONFIG_LUCI_LANG_sv is not set
-# CONFIG_LUCI_LANG_tr is not set
 # CONFIG_LUCI_LANG_uk is not set
+# CONFIG_LUCI_LANG_hu is not set
+# CONFIG_LUCI_LANG_pt is not set
+# CONFIG_LUCI_LANG_ko is not set
+# CONFIG_LUCI_LANG_en is not set
+# CONFIG_LUCI_LANG_el is not set
+# CONFIG_LUCI_LANG_sk is not set
+# CONFIG_LUCI_LANG_ru is not set
 # CONFIG_LUCI_LANG_vi is not set
+# CONFIG_LUCI_LANG_de is not set
+# CONFIG_LUCI_LANG_no is not set
+# CONFIG_LUCI_LANG_ms is not set
+# CONFIG_LUCI_LANG_pl is not set
 CONFIG_LUCI_LANG_zh-cn=y
+# CONFIG_LUCI_LANG_ro is not set
+# CONFIG_LUCI_LANG_he is not set
 # CONFIG_LUCI_LANG_zh-tw is not set
+# CONFIG_LUCI_LANG_tr is not set
+# CONFIG_LUCI_LANG_sv is not set
+# CONFIG_LUCI_LANG_ja is not set
+# CONFIG_LUCI_LANG_ca is not set
+# CONFIG_LUCI_LANG_es is not set
+# CONFIG_LUCI_LANG_pt-br is not set
+# CONFIG_LUCI_LANG_cs is not set
+# CONFIG_LUCI_LANG_fr is not set
+# CONFIG_LUCI_LANG_it is not set
 # end of Translations
 
 CONFIG_PACKAGE_luci-compat=y
@@ -4789,6 +4790,7 @@ CONFIG_PACKAGE_luci-mod-admin-full=y
 #
 # 3. Applications
 #
+# CONFIG_PACKAGE_luci-app-3ginfo-lite is not set
 CONFIG_PACKAGE_luci-app-accesscontrol=y
 # CONFIG_PACKAGE_luci-app-acme is not set
 # CONFIG_PACKAGE_luci-app-adblock is not set
@@ -4815,6 +4817,7 @@ CONFIG_PACKAGE_luci-app-autoreboot=y
 # CONFIG_PACKAGE_luci-app-cjdns is not set
 # CONFIG_PACKAGE_luci-app-clamav is not set
 # CONFIG_PACKAGE_luci-app-commands is not set
+CONFIG_PACKAGE_luci-app-cpe=y
 # CONFIG_PACKAGE_luci-app-cshark is not set
 # CONFIG_PACKAGE_luci-app-dawn is not set
 CONFIG_PACKAGE_luci-app-ddns=y
@@ -4826,6 +4829,7 @@ CONFIG_PACKAGE_luci-app-ddns=y
 # CONFIG_PACKAGE_luci-app-diskman_INCLUDE_mdadm is not set
 # CONFIG_PACKAGE_luci-app-dnscrypt-proxy is not set
 # CONFIG_PACKAGE_luci-app-dnsforwarder is not set
+# CONFIG_PACKAGE_luci-app-dnsmasq-ipset is not set
 # CONFIG_PACKAGE_luci-app-dump1090 is not set
 # CONFIG_PACKAGE_luci-app-dynapoint is not set
 # CONFIG_PACKAGE_luci-app-e2guardian is not set
@@ -4836,12 +4840,14 @@ CONFIG_PACKAGE_luci-app-firewall=y
 # CONFIG_PACKAGE_luci-app-frpc is not set
 # CONFIG_PACKAGE_luci-app-frps is not set
 # CONFIG_PACKAGE_luci-app-fwknopd is not set
-CONFIG_PACKAGE_luci-app-gobinetmodem=y
+# CONFIG_PACKAGE_luci-app-gobinetmodem is not set
 # CONFIG_PACKAGE_luci-app-guest-wifi is not set
 # CONFIG_PACKAGE_luci-app-haproxy-tcp is not set
 # CONFIG_PACKAGE_luci-app-hd-idle is not set
 # CONFIG_PACKAGE_luci-app-hnet is not set
+# CONFIG_PACKAGE_luci-app-hotspot is not set
 # CONFIG_PACKAGE_luci-app-https-dns-proxy is not set
+# CONFIG_PACKAGE_luci-app-hypermodem is not set
 # CONFIG_PACKAGE_luci-app-ipsec-server is not set
 # CONFIG_PACKAGE_luci-app-ipsec-vpnd is not set
 # CONFIG_PACKAGE_luci-app-kodexplorer is not set
@@ -4849,8 +4855,9 @@ CONFIG_PACKAGE_luci-app-gobinetmodem=y
 # CONFIG_PACKAGE_luci-app-lxc is not set
 # CONFIG_PACKAGE_luci-app-minidlna is not set
 # CONFIG_PACKAGE_luci-app-mjpg-streamer is not set
+# CONFIG_PACKAGE_luci-app-modem is not set
 # CONFIG_PACKAGE_luci-app-mosdns is not set
-# CONFIG_PACKAGE_luci-app-mtwifi is not set
+CONFIG_PACKAGE_luci-app-mtwifi=y
 # CONFIG_PACKAGE_luci-app-music-remote-center is not set
 # CONFIG_PACKAGE_luci-app-mwan3 is not set
 # CONFIG_PACKAGE_luci-app-mwan3helper is not set
@@ -4888,6 +4895,8 @@ CONFIG_PACKAGE_luci-app-qbittorrent_dynamic=y
 # CONFIG_PACKAGE_luci-app-rclone is not set
 CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-webui=y
 CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-ng=y
+# CONFIG_PACKAGE_luci-app-rooterddns is not set
+# CONFIG_PACKAGE_luci-app-rootervpn is not set
 # CONFIG_PACKAGE_luci-app-rp-pppoe-server is not set
 # CONFIG_PACKAGE_luci-app-samba is not set
 # CONFIG_PACKAGE_luci-app-samba4 is not set
@@ -4897,6 +4906,7 @@ CONFIG_PACKAGE_luci-app-rclone_INCLUDE_rclone-ng=y
 # CONFIG_PACKAGE_luci-app-siitwizard is not set
 # CONFIG_PACKAGE_luci-app-simple-adblock is not set
 # CONFIG_PACKAGE_luci-app-smartdns is not set
+CONFIG_PACKAGE_luci-app-sms-tool=y
 # CONFIG_PACKAGE_luci-app-socat is not set
 # CONFIG_PACKAGE_luci-app-softethervpn is not set
 # CONFIG_PACKAGE_luci-app-spdmodem is not set
@@ -4924,7 +4934,7 @@ CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_PDNSD=y
 # CONFIG_PACKAGE_luci-app-unbound is not set
 CONFIG_PACKAGE_luci-app-upnp=y
 # CONFIG_PACKAGE_luci-app-usb-printer is not set
-CONFIG_PACKAGE_luci-app-usbmodem=y
+# CONFIG_PACKAGE_luci-app-usbmodem is not set
 # CONFIG_PACKAGE_luci-app-uugamebooster is not set
 # CONFIG_PACKAGE_luci-app-v2ray-server is not set
 # CONFIG_PACKAGE_luci-app-verysync is not set
@@ -4946,8 +4956,8 @@ CONFIG_PACKAGE_luci-app-wol=y
 #
 # 4. Themes
 #
-# CONFIG_PACKAGE_luci-theme-argon is not set
-CONFIG_PACKAGE_luci-theme-argon-mod=y
+CONFIG_PACKAGE_luci-theme-argon=y
+# CONFIG_PACKAGE_luci-theme-argon-mod is not set
 CONFIG_PACKAGE_luci-theme-bootstrap=y
 # CONFIG_PACKAGE_luci-theme-design is not set
 # CONFIG_PACKAGE_luci-theme-material is not set
@@ -5025,6 +5035,8 @@ CONFIG_PACKAGE_luci-i18n-autoreboot-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-base-vi is not set
 CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-base-zh-tw is not set
+CONFIG_PACKAGE_luci-i18n-cpe-zh-cn=y
+# CONFIG_PACKAGE_luci-i18n-cpe-zh_Hans is not set
 # CONFIG_PACKAGE_luci-i18n-ddns-bg is not set
 # CONFIG_PACKAGE_luci-i18n-ddns-ca is not set
 # CONFIG_PACKAGE_luci-i18n-ddns-cs is not set
@@ -5081,10 +5093,11 @@ CONFIG_PACKAGE_luci-i18n-filetransfer-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-firewall-vi is not set
 CONFIG_PACKAGE_luci-i18n-firewall-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-firewall-zh-tw is not set
-CONFIG_PACKAGE_luci-i18n-gobinetmodem-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-nlbwmon-ja is not set
 # CONFIG_PACKAGE_luci-i18n-nlbwmon-ru is not set
 CONFIG_PACKAGE_luci-i18n-nlbwmon-zh-cn=y
+# CONFIG_PACKAGE_luci-i18n-sms-tool-pl is not set
+CONFIG_PACKAGE_luci-i18n-sms-tool-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-turboacc-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-upnp-ca is not set
 # CONFIG_PACKAGE_luci-i18n-upnp-cs is not set
@@ -5111,7 +5124,6 @@ CONFIG_PACKAGE_luci-i18n-turboacc-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-upnp-vi is not set
 CONFIG_PACKAGE_luci-i18n-upnp-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-upnp-zh-tw is not set
-CONFIG_PACKAGE_luci-i18n-usbmodem-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-vlmcsd-zh-cn=y
 CONFIG_PACKAGE_luci-i18n-vsftpd-zh-cn=y
 # CONFIG_PACKAGE_luci-i18n-wol-ca is not set
@@ -5948,7 +5960,16 @@ CONFIG_PACKAGE_uhttpd-mod-ubus=y
 # CONFIG_PACKAGE_hcxdumptool is not set
 # CONFIG_PACKAGE_hcxtools is not set
 # CONFIG_PACKAGE_horst is not set
-# CONFIG_PACKAGE_mt_wifi is not set
+CONFIG_PACKAGE_mt_wifi=y
+
+#
+# MT_WIFI Configuration
+#
+# CONFIG_MTK_CHIP_MT7603E_MT7612E is not set
+# CONFIG_MTK_CHIP_MT7603E_MT7615E is not set
+# CONFIG_MTK_CHIP_MT7915E_DBDC is not set
+# end of MT_WIFI Configuration
+
 # CONFIG_PACKAGE_mtk_apcli is not set
 # CONFIG_PACKAGE_mtkiappd is not set
 # CONFIG_PACKAGE_pixiewps is not set
@@ -5973,15 +5994,11 @@ CONFIG_PACKAGE_hostapd-common=y
 # CONFIG_PACKAGE_hostapd-mbedtls is not set
 # CONFIG_PACKAGE_hostapd-mini is not set
 # CONFIG_PACKAGE_hostapd-openssl is not set
-# CONFIG_PACKAGE_hostapd-utils is not set
 # CONFIG_PACKAGE_hostapd-wolfssl is not set
 # CONFIG_PACKAGE_hs20-client is not set
 # CONFIG_PACKAGE_hs20-common is not set
 # CONFIG_PACKAGE_hs20-server is not set
-# CONFIG_PACKAGE_wpa-cli is not set
 # CONFIG_PACKAGE_wpa-supplicant is not set
-# CONFIG_WPA_RFKILL_SUPPORT is not set
-CONFIG_WPA_MSG_MIN_PRIORITY=3
 # CONFIG_WPA_WOLFSSL is not set
 # CONFIG_DRIVER_WEXT_SUPPORT is not set
 CONFIG_DRIVER_11AC_SUPPORT=y
@@ -6007,7 +6024,7 @@ CONFIG_WPA_MBO_SUPPORT=y
 # CONFIG_PACKAGE_wpad-mesh-openssl is not set
 # CONFIG_PACKAGE_wpad-mesh-wolfssl is not set
 # CONFIG_PACKAGE_wpad-mini is not set
-CONFIG_PACKAGE_wpad-openssl=y
+# CONFIG_PACKAGE_wpad-openssl is not set
 # CONFIG_PACKAGE_wpad-wolfssl is not set
 # end of WirelessAPD
 
@@ -6307,6 +6324,72 @@ CONFIG_PACKAGE_wol=y
 # end of Network
 
 #
+# ROOter
+#
+
+#
+# Basic Applications
+#
+# CONFIG_PACKAGE_ext-command is not set
+# CONFIG_PACKAGE_ext-extra is not set
+# CONFIG_PACKAGE_ext-p910nd is not set
+# CONFIG_PACKAGE_luci-app-guestwifi is not set
+# CONFIG_PACKAGE_usb-storage is not set
+# end of Basic Applications
+
+#
+# Basic Support
+#
+# CONFIG_PACKAGE_ext-buttons is not set
+# CONFIG_PACKAGE_ext-rooter-basic is not set
+# CONFIG_PACKAGE_ext-sms is not set
+# end of Basic Support
+
+#
+# Drivers
+#
+# CONFIG_PACKAGE_rmbim is not set
+# CONFIG_PACKAGE_rqmi is not set
+# end of Drivers
+
+#
+# Optional Applications
+#
+# CONFIG_PACKAGE_bwallocate is not set
+# CONFIG_PACKAGE_bwmon is not set
+# CONFIG_PACKAGE_ext-autoapn is not set
+# CONFIG_PACKAGE_ext-blacklist is not set
+# CONFIG_PACKAGE_ext-blockport is not set
+# CONFIG_PACKAGE_ext-rspeedtest is not set
+# CONFIG_PACKAGE_ext-speedtest is not set
+# CONFIG_PACKAGE_ext-texting is not set
+# CONFIG_PACKAGE_ext-wireguard is not set
+# CONFIG_PACKAGE_ext-zerotier is not set
+# CONFIG_PACKAGE_extramenu is not set
+# CONFIG_PACKAGE_pingtest is not set
+# CONFIG_PACKAGE_qlog is not set
+# CONFIG_PACKAGE_udp-tunnel is not set
+# CONFIG_PACKAGE_webconsole is not set
+# end of Optional Applications
+
+#
+# Router Specific
+#
+# CONFIG_PACKAGE_rd05a1 is not set
+# CONFIG_PACKAGE_we826q is not set
+# end of Router Specific
+
+#
+# Splash Screens
+#
+# CONFIG_PACKAGE_ext-splash is not set
+# CONFIG_PACKAGE_ext-splashconfig is not set
+# CONFIG_PACKAGE_splash is not set
+# CONFIG_PACKAGE_status is not set
+# end of Splash Screens
+# end of ROOter
+
+#
 # Sound
 #
 # CONFIG_PACKAGE_alsa-utils is not set
@@ -6372,7 +6455,7 @@ CONFIG_PACKAGE_wol=y
 # Boot Loaders
 #
 # CONFIG_PACKAGE_fconfig is not set
-# CONFIG_PACKAGE_uboot-envtools is not set
+CONFIG_PACKAGE_uboot-envtools=y
 # end of Boot Loaders
 
 #
@@ -6905,7 +6988,7 @@ CONFIG_PACKAGE_openssl-util=y
 # CONFIG_PACKAGE_qfirehose is not set
 # CONFIG_PACKAGE_qmi-utils is not set
 # CONFIG_PACKAGE_qrencode is not set
-CONFIG_PACKAGE_quectel-CM-5G=y
+# CONFIG_PACKAGE_quectel-CM-5G is not set
 # CONFIG_PACKAGE_quota is not set
 # CONFIG_PACKAGE_ravpower-mcu is not set
 # CONFIG_PACKAGE_readsb is not set
@@ -6942,7 +7025,7 @@ CONFIG_PACKAGE_shellsync=y
 # CONFIG_PACKAGE_smartd-mail is not set
 # CONFIG_PACKAGE_smartmontools is not set
 # CONFIG_PACKAGE_smartmontools-drivedb is not set
-# CONFIG_PACKAGE_sms-tool is not set
+CONFIG_PACKAGE_sms-tool=y
 # CONFIG_PACKAGE_smstools3 is not set
 # CONFIG_PACKAGE_sockread is not set
 # CONFIG_PACKAGE_spi-tools is not set
