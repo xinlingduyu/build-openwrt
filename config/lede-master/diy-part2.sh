@@ -18,6 +18,10 @@ sed -i 's/TARGET_rockchip/TARGET_rockchip\|\|TARGET_armvirt/g' package/lean/auto
 sed -i "s|DISTRIB_REVISION='.*'|DISTRIB_REVISION='R$(date +%Y.%m.%d)'|g" package/lean/default-settings/files/zzz-default-settings
 echo "DISTRIB_SOURCECODE='lede'" >>package/base-files/files/etc/openwrt_release
 
+echo 'src-git 5g https://github.com/Siriling/5G-Modem-Support' >>feeds.conf.default
+echo 'src-git 3ginfo https://github.com/4IceG/luci-app-3ginfo-lite' >>feeds.conf.default
+echo 'src-git 5g https://github.com/Siriling/5G-Modem-Support' >>feeds.conf.default
+
 # Modify default IP（FROM 192.168.1.1 CHANGE TO 192.168.31.4）
 # sed -i 's/192.168.1.1/192.168.31.4/g' package/base-files/files/bin/config_generate
 
