@@ -24,7 +24,9 @@ echo "DISTRIB_SOURCECODE='immortalwrt'" >>package/base-files/files/etc/openwrt_r
 #
 # Add luci-app-amlogic
 svn co https://github.com/ophub/luci-app-amlogic/trunk/luci-app-amlogic package/luci-app-amlogic
-
+svn co https://github.com/Siriling/5G-Modem-Support/tree/main/luci-app-modem package/luci-app-modem
+svn co https://github.com/Siriling/5G-Modem-Support/tree/main/luci-app-sms-tool package/luci-app-sms-tool
+svn co https://github.com/kenzok78/luci-theme-design.git  package/luci-theme-design
 # Apply patch
 # git apply ../config/patches/{0001*,0002*}.patch --directory=feeds/luci
 #
