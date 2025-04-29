@@ -1,0 +1,104 @@
+From cf76e5968e21c260d37ccbd18926584a15ada328 Mon Sep 17 00:00:00 2001
+From: baiywt <baiywt_gj@163.com>
+Date: Thu, 6 Jan 2022 14:51:49 +0800
+Subject: [PATCH 2/4] Resizing filesystem at first boot
+
+---
+ .../armv8/base-files/etc/init.d/resize-rootfs |  9 +++
+ .../base-files/etc/rc.d/S22resize-rootfs      |  1 +
+ .../armv8/base-files/usr/bin/resize-rootfs.sh | 60 +++++++++++++++++++
+ 3 files changed, 70 insertions(+)
+ create mode 100755 target/linux/rockchip/armv8/base-files/etc/init.d/resize-rootfs
+ create mode 100755 target/linux/rockchip/armv8/base-files/etc/rc.d/S22resize-rootfs
+ create mode 100755 target/linux/rockchip/armv8/base-files/usr/bin/resize-rootfs.sh
+
+diff --git a/target/linux/rockchip/armv8/base-files/etc/init.d/resize-rootfs b/target/linux/rockchip/armv8/base-files/etc/init.d/resize-rootfs
+new file mode 100755
+index 0000000000..740b751499
+--- /dev/null
++++ b/target/linux/rockchip/armv8/base-files/etc/init.d/resize-rootfs
+@@ -0,0 +1,9 @@
++#!/bin/sh /etc/rc.common
++
++START=22
++start() {
++	rm -rf /etc/rc.d/S22resize-rootfs
++	#service resize-rootfs disable
++	/usr/bin/resize-rootfs.sh
++}
++
+diff --git a/target/linux/rockchip/armv8/base-files/etc/rc.d/S22resize-rootfs b/target/linux/rockchip/armv8/base-files/etc/rc.d/S22resize-rootfs
+new file mode 100755
+index 0000000000..051d001b6c
+--- /dev/null
++++ b/target/linux/rockchip/armv8/base-files/etc/rc.d/S22resize-rootfs
+@@ -0,0 +1 @@
++../init.d/resize-rootfs
+diff --git a/target/linux/rockchip/armv8/base-files/usr/bin/resize-rootfs.sh b/target/linux/rockchip/armv8/base-files/usr/bin/resize-rootfs.sh
+new file mode 100755
+index 0000000000..2fc4d26292
+--- /dev/null
++++ b/target/linux/rockchip/armv8/base-files/usr/bin/resize-rootfs.sh
+@@ -0,0 +1,60 @@
++#!/bin/bash
++
++FDISK=$(which fdisk) || { echo "E: You must have fdisk" && exit 1; }
++LOSETUP=$(which losetup) || { echo "E: You must have losetup" && exit 1; }
++roottype=$(findmnt -n -o SOURCE / -o FSTYPE)
++case ${roottype} in
++	overlay)
++		FSCKF2FS=$(which fsck.f2fs) || { echo "E: You must have fsck.f2fs" && exit 1; }
++		rootsource=$(findmnt -n -o SOURCE /rom)			# i.e. /dev/mmcblk0p2
++		rootdevice=${rootsource%p*}				# i.e. /dev/mmcblk0
++		partitions=${rootsource##*p}
++
++		# Resizing partitions
++		lastsector=$(${FDISK} -l ${rootdevice} |grep "Disk ${rootdevice}" |awk '{print $7}')
++		lastsector=$(( $lastsector - 1 ))
++		startfrom=$(${FDISK} -l ${rootdevice} |grep ${rootsource} |awk '{print $2}')
++		partend=$(${FDISK} -l ${rootdevice} |grep ${rootsource} |awk '{print $3}')
++		[[ $lastsector -eq $partend ]] && exit 0
++		(echo d; echo $partitions; echo n; echo p; echo ; echo $startfrom; echo $lastsector ; echo w;) | fdisk $rootdevice
++		sync
++
++		# Start resizing filesystem
++		LOOP="$(losetup -n -O NAME | sort | sed -n -e "1p")"
++		ROOT="$(losetup -n -O BACK-FILE ${LOOP} | sed -e "s|^|/dev|")"
++		OFFS="$(losetup -n -O OFFSET ${LOOP})"
++		LOOP="$(losetup -f)"
++		${LOSETUP} -o ${OFFS} ${LOOP} ${ROOT}
++		${FSCKF2FS} -f ${LOOP}
++		mount ${LOOP} /mnt
++		umount ${LOOP}
++		resize.f2fs ${LOOP}
++		sync && reboot
++		;;
++	ext4)
++		FSCKEXT4=$(which fsck.ext4) || { echo "E: You must have fsck.ext4" && exit 1; }
++		RESIZE2FS=$(which resize2fs) || { echo "E: You must have resize2fs" && exit 1; }
++		rootsource=$(findmnt -n -o SOURCE / | sed 's~\[.*\]~~')		# i.e. /dev/mmcblk0p2
++		rootdevice=${rootsource%p*}					# i.e. /dev/mmcblk0
++		partitions=${rootsource##*p}
++
++		# Resizing partitions
++		lastsector=$(${FDISK} -l ${rootdevice} |grep "Disk ${rootdevice}" |awk '{print $7}')
++		lastsector=$(( $lastsector - 1 ))
++		startfrom=$(${FDISK} -l ${rootdevice} |grep ${rootsource} |awk '{print $2}')
++		partend=$(${FDISK} -l ${rootdevice} |grep ${rootsource} |awk '{print $3}')
++		[[ $lastsector -eq $partend ]] && exit 0
++		(echo d; echo $partitions; echo n; echo p; echo ; echo $startfrom; echo $lastsector ; echo w;) | fdisk $rootdevice
++		sync
++
++		# Start resizing filesystem
++		LOOP="$(losetup -f)"
++		${LOSETUP} ${LOOP} ${rootsource}
++		${FSCKEXT4} -y ${LOOP}
++		${RESIZE2FS} ${LOOP}
++		sync
++		;;
++esac
++
++exit 0
++
+-- 
+2.35.1.windows.2

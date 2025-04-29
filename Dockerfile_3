@@ -1,0 +1,16 @@
+# v3 复制config，并下载依赖
+FROM registry.cn-beijing.aliyuncs.com/gojuukaze/openwrt-build:v2
+
+USER opde:opde
+ENV HOME /home/opde
+
+WORKDIR /openwrt/immortalwrt
+
+COPY config_1 /openwrt/immortalwrt/.config
+RUN sudo chown opde:opde /openwrt/immortalwrt/.config
+RUN make defconfig
+
+RUN make download -j$(nproc)
+
+# 这里我是本地编译
+# RUN make V=s -j$(nproc)

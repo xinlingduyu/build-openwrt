@@ -1,0 +1,17 @@
+diff --git a/package/network/config/firewall/files/firewall.config b/package/network/config/firewall/files/firewall.config
+index dcf76ee42d..263b519c23 100644
+--- a/package/network/config/firewall/files/firewall.config
++++ b/package/network/config/firewall/files/firewall.config
+@@ -18,9 +18,9 @@ config zone
+ 	option name		wan
+ 	list   network		'wan'
+ 	list   network		'wan6'
+-	option input		REJECT
++	option input		ACCEPT
+ 	option output		ACCEPT
+-	option forward		REJECT
++	option forward		ACCEPT
+ 	option masq		1
+ 	option mtu_fix		1
+ 
+

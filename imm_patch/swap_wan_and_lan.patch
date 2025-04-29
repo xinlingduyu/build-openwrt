@@ -1,0 +1,24 @@
+From ce3a4e957a32d5b0dd5f8929949a918fb35da0c6 Mon Sep 17 00:00:00 2001
+From: mingxioyu <fengying0347@163.com>
+Date: Thu, 24 Mar 2022 14:41:23 +0000
+Subject: [PATCH 4/4] rockchip swap wan and lan
+
+---
+ target/linux/rockchip/armv8/base-files/etc/board.d/02_network | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/target/linux/rockchip/armv8/base-files/etc/board.d/02_network b/target/linux/rockchip/armv8/base-files/etc/board.d/02_network
+index a9e6995811..b9c9cf37c2 100755
+--- a/target/linux/rockchip/armv8/base-files/etc/board.d/02_network
++++ b/target/linux/rockchip/armv8/base-files/etc/board.d/02_network
+@@ -13,7 +13,7 @@ rockchip_setup_interfaces()
+ 	friendlyarm,nanopi-r4s|\
+ 	xunlong,orangepi-r1-plus|\
+ 	xunlong,orangepi-r1-plus-lts)
+-		ucidef_set_interfaces_lan_wan 'eth1' 'eth0'
++		ucidef_set_interfaces_lan_wan 'eth0' 'eth1'
+ 		;;
+ 	*)
+ 		ucidef_set_interface_lan 'eth0'
+-- 
+2.35.1.windows.2

@@ -1,0 +1,17 @@
+# v1 clone代码，并执行基础的的update与install
+FROM registry.cn-beijing.aliyuncs.com/gojuukaze/openwrt-build:base
+
+USER opde:opde
+ENV HOME /home/opde
+
+WORKDIR /openwrt
+
+RUN git clone -b v21.02.3 --single-branch https://github.com/immortalwrt/immortalwrt
+
+WORKDIR /openwrt/immortalwrt
+
+RUN ./scripts/feeds update -a 
+
+RUN ./scripts/feeds install -a
+
+

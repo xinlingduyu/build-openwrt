@@ -1,0 +1,44 @@
+# v2 应用代码修改，再次update，install
+FROM registry.cn-beijing.aliyuncs.com/gojuukaze/openwrt-build:v1
+
+USER opde:opde
+ENV HOME /home/opde
+
+WORKDIR /openwrt/immortalwrt
+
+# imm_patch下的patch只能应用在 immortalwrt v21.02.3，其他未测试
+COPY imm_patch /openwrt/immortalwrt/imm_patch
+RUN sudo chown -R opde:opde /openwrt/immortalwrt/imm_patch
+# 修改代码，增加一些功能。可以根据你的需求添加
+RUN git apply imm_patch/wan_ACCEPT.patch
+
+# 软件包
+RUN sed -i '$a src-git kenzo https://github.com/kenzok8/openwrt-packages' feeds.conf.default
+RUN sed -i '$a src-git small https://github.com/kenzok8/small' feeds.conf.default
+# 修改默认ip为 192.168.2.1
+RUN sed -i 's/192.168.1.1/192.168.2.1/g' package/base-files/files/bin/config_generate
+# 时区
+RUN sed -i "s/'UTC'/'CST-8'\n   set system.@system[-1].zonename='Asia\/Shanghai'/g" package/base-files/files/bin/config_generate
+
+
+RUN rm -rf /openwrt/immortalwrt/imm_patch
+
+RUN ./scripts/feeds update -a 
+
+RUN ./scripts/feeds install -a
+
+
+# 单独安装一次这几个包，我这运行install时会提示下面这些包不存在，如果你执行install没有提示则可以不用
+RUN ./scripts/feeds install lm-sensors
+RUN ./scripts/feeds install luci-app-samba4
+RUN ./scripts/feeds install wsdd2
+RUN ./scripts/feeds install luci-lib-base
+RUN ./scripts/feeds install luci-proto-ipv6
+RUN ./scripts/feeds install wget-ssl
+RUN ./scripts/feeds install liblzma
+RUN ./scripts/feeds install libnetsnmp
+RUN ./scripts/feeds install libcap
+RUN ./scripts/feeds install libpam
+
+# 检查下是否还有报错
+RUN ./scripts/feeds install -a
